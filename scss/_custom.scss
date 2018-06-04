@@ -1,0 +1,49 @@
+// Here you can add other styles
+.label {
+	font-size: 11px;
+	padding : 5px 10px;
+	font-weight: bold;
+}
+
+.label.label-warning {
+	background-color:#FFCF4B;
+	color: #333333;
+}
+
+.label.label-success {
+	background-color:#0EAC51;
+	color: #FFF;
+}
+
+.panel-toolbar {
+	background-color: #ECF0F1;
+	padding: 10px;
+}
+
+.btn {
+	margin : 0px 5px;
+	font-size: 12px;
+}
+
+.btn.btn-primary {
+	background-color: #20a8d8;
+	border: none;
+	color: white;
+}
+.btn.btn-default {
+	background-color: #DDD;
+	border: none;
+	color: #666;
+}
+
+.btn.btn-xs {
+	font-size: 10px;
+	padding: 5px 10px;
+}
+
+.table {
+	font-size: 12px;
+	.th-small {
+		font-size: 11px;
+	}
+}
