@@ -11,7 +11,7 @@ export default {
     },
     {
       title: true,
-      name: 'General',
+      name: 'SASARAN KINERJA PEGAWAI',
       wrapper: {            // optional wrapper object
         element: "span",      // required valid HTML5 element tag
         attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
@@ -19,31 +19,33 @@ export default {
       class: ""             // optional class names space delimited list for title item ex: "text-center"
     },
     {
-      name: 'SKP',
-      url: '/skp',
-      icon: 'icon-calendar',
-      children: [
-        {
-          name: 'List SKP',
-          url: '/skp/list-skp',
-          icon: 'icon-list'
-        },
-        {
-          name: 'Target SKP',
-          url: '/skp/target-skp',
-          icon: 'icon-list'
-        },
-        {
-          name: 'Capaian SKP',
-          url: '/skp/capaian-skp',
-          icon: 'icon-list'
-        }
-      ]
+      name: 'List SKP',
+      url: '/skp/list-skp',
+      icon: 'icon-list'
     },
     {
-      name: 'Aktifitas',
+      name: 'Target',
+      url: '/skp/target-skp',
+      icon: 'fa fa-book'
+    },
+    {
+      name: 'Capaian',
+      url: '/skp/capaian-skp',
+      icon: 'fa fa-calendar-check-o'
+    },
+    {
+      name: 'Kegiatan',
       url: '/kegiatan',
-      icon: 'icon-list',
+      icon: 'fa fa-history',
+    },
+    {
+      title: true,
+      name: 'Presensi',
+      wrapper: {            // optional wrapper object
+        element: "span",      // required valid HTML5 element tag
+        attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
+      },
+      class: ""             // optional class names space delimited list for title item ex: "text-center"
     },
     {
       name: 'E-Presensi',
