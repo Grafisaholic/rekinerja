@@ -5,6 +5,8 @@ import {
 	Button,
 	Alert,
 	Form,
+	Label,
+	FormGroup,
 	Input
 } from "reactstrap";
 const _ = require('underscore')
@@ -89,22 +91,30 @@ export default class Capaian extends Component {
 	render() {
 		return (
 			<Form>
+				<Info message={data.info.capaian.infoTambah}/>
 				<div className="form-group">
 					{this.state.errorMessage && (
 						<Alert color="danger">
 							{this.state.errorMessage}
 						</Alert>
 					)}
-					<select className="form-control" onChange={(data) => this.setState({selectedMonth : data.target.value})}>
-						<option>PILIH BULAN</option>
-						{
-							this.state.bulan.map((b, key) => {
-								return (
-									<option value={b.index} key={key}>{b.bulan}</option>
-								)
-							})
-						}
-					</select>
+					<FormGroup>
+						<Label>Nama Kegiatan Tugas Jabatan</Label>
+						<Input value={this.props.nama_kegiatan} name='nama_kegiatan' disabled readonly/>
+					</FormGroup>
+					<FormGroup>
+						<Label>Bulan</Label>
+						<select className="form-control" onChange={(data) => this.setState({selectedMonth : data.target.value})}>
+							<option>PILIH BULAN</option>
+							{
+								this.state.bulan.map((b, key) => {
+									return (
+										<option value={b.index} key={key}>{b.bulan}</option>
+									)
+								})
+							}
+						</select>
+					</FormGroup>
 
 				</div>
 				<div className="form-group">

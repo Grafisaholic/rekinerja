@@ -104,44 +104,46 @@ export default class ListSKP extends Component {
 
 	renderDetail() {
 		return (
-			<Table className="table-striped">
-				<tbody>
-					<tr>
-						<td style={{width : '200px'}}>NIP</td>
-						<td>:</td>
-						<td>1998060420150909001</td>
-					</tr>
-					<tr>
-						<td style={{width : '200px'}}>Nama Pegawai</td>
-						<td>:</td>
-						<td>Shodiqul Muzaki</td>
-					</tr>
-					<tr>
-						<td style={{width : '200px'}}>NIP Atasan</td>
-						<td>:</td>
-						<td>1998060420150909001</td>
-					</tr>
-					<tr>
-						<td style={{width : '200px'}}>Nama Atasan</td>
-						<td>:</td>
-						<td>Fawaiq Nur Muhammad</td>
-					</tr>
-					<tr>
-						<td style={{width : '200px'}}>Tahun SKP</td>
-						<td>:</td>
-						<td>2018</td>
-					</tr>
+			<div className="table-responsive">
+				<Table className="table-striped">
+					<tbody>
+						<tr>
+							<td style={{width : '200px'}}>NIP Atasan</td>
+							<td>:</td>
+							<td>1998060420150909001</td>
+						</tr>
+						<tr>
+							<td style={{width : '200px'}}>Nama Atasan</td>
+							<td>:</td>
+							<td>Fawaiq Nur Muhammad</td>
+						</tr>
+						<tr>
+							<td style={{width : '200px'}}>NIP Pegawai</td>
+							<td>:</td>
+							<td>1998060420150909001</td>
+						</tr>
+						<tr>
+							<td style={{width : '200px'}}>Nama Pegawai</td>
+							<td>:</td>
+							<td>Shodiqul Muzaki</td>
+						</tr>
+						<tr>
+							<td style={{width : '200px'}}>Tahun SKP</td>
+							<td>:</td>
+							<td>2018</td>
+						</tr>
 
-					<tr>
-						<td></td>
-						<td></td>
-						<td>
-							<Button className="btn btn-primary">BUAT SKP SEKARANG</Button>
-							<Button className="btn btn-default" onClick={() => this.setState({ modalOpen : false })}>BATALKAN</Button>
-						</td>
-					</tr>
-				</tbody>
-			</Table>
+						<tr>
+							<td></td>
+							<td></td>
+							<td>
+								<Button className="btn btn-primary">BUAT SKP SEKARANG</Button>
+								<Button className="btn btn-default" onClick={() => this.setState({ modalOpen : false })}>BATALKAN</Button>
+							</td>
+						</tr>
+					</tbody>
+				</Table>
+			</div>
 		)
 	}
 
@@ -160,20 +162,22 @@ export default class ListSKP extends Component {
 								{this.renderButton()}
 
 								<div className="table-reseponsive">
-									<Table className="table-striped">
-										<thead>
-											<tr>
-												<th>Tahun</th>
-												<th>NIP Atasan</th>
-												<th>Nama Atasan</th>
-												<th>Tanggal Pembuatan</th>
-												<th>Status</th>
-												<th>Aksi</th>
-											</tr>
-										</thead>
+									<div className="table-responsive">
+										<Table className="table-striped">
+											<thead>
+												<tr>
+													<th>Tahun</th>
+													<th>NIP Atasan</th>
+													<th>Nama Atasan</th>
+													<th>Tanggal Pembuatan</th>
+													<th>Status</th>
+													<th>Aksi</th>
+												</tr>
+											</thead>
 
-										{this.renderBody()}
-									</Table>
+											{this.renderBody()}
+										</Table>
+									</div>
 								</div>
 							</CardBlock>
 						</Card>					

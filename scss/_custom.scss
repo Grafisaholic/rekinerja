@@ -47,3 +47,41 @@
 		font-size: 11px;
 	}
 }
+
+.input-group-addon {
+	padding : 0;
+	border: none;
+	background-color: transparent;
+
+	.label-addon {
+		background-color: #CCC;
+		font-size: 14px;
+		margin-left: -1px;
+	}
+}
+.rc-calendar-full {
+	width: 100%;
+}
+.rc-time-picker-panel-select {
+	overflow-x: hidden;
+}
+.rc-time-picker {
+	padding : 0px;
+	border: none;
+	.rc-time-picker-input {
+		height: auto;
+		padding: 0.5em 0.5em;
+	}
+}
+.bullet {
+	width : 5px !important;
+	height : 5px !important;
+	background-color: #27AE60;
+	margin : 5px;
+	border-radius: 50%;
+	position: absolute;
+	margin-top: 10px;
+}
+.bullet.empty {
+	background-color: #CCC;
+}

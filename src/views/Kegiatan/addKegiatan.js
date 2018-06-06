@@ -3,51 +3,122 @@ import {
   Row,
   Col,
   Button,
-  ButtonDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
   Card,
   CardHeader,
   CardFooter,
   CardBlock,
   Form,
+  Alert,
   FormGroup,
   FormText,
   Label,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton
+  Input
 } from "reactstrap";
+import Select from 'react-select';
+import TimePicker from 'rc-time-picker';
+import 'rc-time-picker/assets/index.css';
 
 export default class AddKegiatan extends Component {
-  render() {
-	return (
-		<div className="animated fadeIn">
-			<Row>
-				<Col xs="12" sm="6">
-					<Card>
-						<CardHeader className="bg-primary">
-							<strong>Kegiatan</strong>
-							<br/>
-							<small>Tambah Kegiatan</small>
-						</CardHeader>
+  constructor(props) {
+    super(props)
+  
+    this.state = {
+      dataTarget : [],
+      namaKegiatan : '',
+      targetValue : '',
+      waktu_mulai : '',
+      waktu_selesai : '',
+      error_message : ''
+    };
+  };
 
-              <CardBlock className="card-body">
-                <Row>
-                  <Col xs="12">
-                    <FormGroup>
-                      <Label htmlFor="name">Pilih Kegiatan</Label>
-                      <Input type="text" id="name" placeholder="Masukkan Kegiatan" required/>
-                    </FormGroup>
+  getDataTarget() {
+    let dataTarget = [{
+      value : '1',
+      label : 'Membuat Aplikasi Sistem Informasi'
+    },{
+      value : '2',
+      label : 'Implementasi Aplikasi Di Masyarakat'
+    }]
+
+    this.setState({dataTarget})
+  }
+
+  componentDidMount() {
+    this.getDataTarget()
+  }
+
+  onSimpan() {
+    let data = {
+      kegiatan_tugas_jabatan : this.state.targetValue,
+      nama_kegiatan : this.state.namaKegiatan,
+      waktu_mulai : this.state.waktu_mulai,
+      waktu_selesai : this.state.waktu_selesai
+    }
+
+    this.setState({
+      error_message : ''
+    })
+
+    if (data.kegiatan_tugas_jabatan != '' || data.nama_kegiatan != '' || data.waktu_mulai != '' || data.waktu_selesai != '') {
+      this.props.onFinish(data)
+    } else {
+      this.setState({
+        error_message : 'Mohon Lengkapi Semua Data'
+      })
+    }
+  }
+  
+  render() {
+    return (
+      <div className="animated fadeIn">
+        <Info message={data.info.kegiatan.infoTambah}/>
+        {
+          this.state.error_message && <Alert color="warning">{this.state.error_message}</Alert>
+        }
+        <Row>
+          <Col xs="12">
+            <FormGroup>
+              <Label htmlFor="name">KEGIATAN TUGAS JABATAN</Label>
+              <Select
+                name="form-field-name"
+                value={this.state.targetValue}
+                onChange={(targetValue) => this.setState({targetValue})}
+                options={this.state.dataTarget}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Label htmlFor="name">NAMA KEGIATAN</Label>
+              <Input type="text" id="name" placeholder="Masukkan Kegiatan" onChange={(nama_kegiatan) => this.setState({nama_kegiatan})} required/>
+            </FormGroup>
+
+            <FormGroup>
+              <Row>
+                  <Col md="6">
+                    <Label>Waktu Mulai</Label>
+                    <TimePicker
+                      className="form-control"
+                      showSecond={false}
+                      onChange={(waktu_mulai) => this.setState({waktu_mulai})}/>
                   </Col>
-                </Row>
-							</CardBlock>
-					</Card>
-				</Col>
-			</Row>
-		</div>
-		)
+                  <Col md="6">
+                    <Label>Waktu Mulai</Label>
+                    <TimePicker
+                      className="form-control"
+                      showSecond={false}
+                      onChange={(waktu_selesai) => this.setState({waktu_selesai})}/>
+                  </Col>
+              </Row>
+            </FormGroup>
+
+            <FormGroup>
+              <Button color="primary" onClick={this.onSimpan.bind(this)}>SIMPAN</Button>
+              <Button color="default" onClick={this.props.onClose.bind(this)}>BATAL</Button>
+            </FormGroup>
+          </Col>
+        </Row>
+      </div>
+    )
   }
 };

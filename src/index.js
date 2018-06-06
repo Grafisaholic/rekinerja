@@ -20,6 +20,15 @@ import Register from './views/Pages/Register/'
 import Page404 from './views/Pages/Page404/'
 import Page500 from './views/Pages/Page500/'
 
+// COMPONENTS
+import Info from './views/Components/Info'
+import DataInfo from './assets/data/info.json'
+
+global.Info = Info
+global.data = {
+  info : DataInfo
+}
+
 const history = createBrowserHistory();
 
 ReactDOM.render((

@@ -1,0 +1,15 @@
+{
+	"skp" : {
+
+	},
+	"target" : {
+		"infoTambah" : "Pastikan data target yang anda isi benar"
+	},
+	"capaian" : {
+		"info" : "Mohon pilih target terlebih dahulu untuk melihat ataupun menambah capaian / realisasi",
+		"infoTambah" : "Saat menambah capaian mohon memilih bulan sekarang"
+	},
+	"kegiatan" : {
+		"infoTambah" : "Mohon pilih tugas jabatan sesuai kegiatan anda saat ini"
+	}
+}

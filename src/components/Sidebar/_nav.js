@@ -35,7 +35,7 @@ export default {
     },
     {
       name: 'Kegiatan',
-      url: '/kegiatan',
+      url: '/skp/kegiatan',
       icon: 'fa fa-history',
     },
     {

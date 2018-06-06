@@ -191,6 +191,7 @@ export default class capaianSKP extends Component {
 
 	renderModal() {
 		let c = <TambahCapaian
+			nama_kegiatan={this.state.targetSelectedName}
 			onFinish={(data) => this.selesaiTambah(data)}
 			onClose={() => this.setState({ modalOpen : false, titleModal : '' })}/>
 
@@ -234,7 +235,7 @@ export default class capaianSKP extends Component {
 							) : (
 								<div style={{margin: 20}}>
 									<center>
-										<h5>PILIH TARGET SKP TERLEBIH DAHULU</h5>
+										<h6>PILIH TARGET SKP TERLEBIH DAHULU</h6>
 									</center>
 
 								</div>
@@ -250,6 +251,7 @@ export default class capaianSKP extends Component {
 		return (
 			<div className="animated fadeIn">
 				{this.renderModal()}
+				<Info message={data.info.capaian.info}/>
 				<Row>
 					<Col xs="12" sm="12" md="4" lg="4">
 						<Card>

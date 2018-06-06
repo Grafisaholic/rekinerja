@@ -14,10 +14,15 @@ export default class ModalComponent extends Component {
 	render() {
 		return (
 			<Modal
+				{...this.props}
 				isOpen={this.props.isOpen}
 				toggle={this.toggle}
 				className='modal-lg'>
-				<ModalHeader toggle={this.toggle} style={{fontSize : '15px'}}>{this.props.modalTitle || 'Modal Title'}</ModalHeader>
+				{
+					this.props.enableTitle ? (
+						<ModalHeader toggle={this.toggle} style={{fontSize : '15px'}}>{this.props.modalTitle || 'Modal Title'}</ModalHeader>
+					) : <div></div>
+				}
 				<ModalBody>
 					{this.props.modalBody()}
 				</ModalBody>

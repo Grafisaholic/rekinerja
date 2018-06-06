@@ -22,7 +22,8 @@ class Full extends Component {
             <Container fluid>
               <Switch>
                 <Route path="/dashboard" name="Dashboard" component={Dashboard}/>
-                <Route path="/kegiatan/add" name="Buat Kegiatan" component={Kegiatan.createNew}/>
+                <Route path="/skp/kegiatan" name="Kegiatan" component={Kegiatan.List}/>
+                <Route path="/skp/kegiatan/add" name="Buat Kegiatan" component={Kegiatan.createNew}/>
                 <Route path="/skp/list-skp" name="List SKP" component={SKP.listSKP}/>
                 <Route path="/skp/capaian-skp" name="Capaian SKP" component={SKP.capaianSKP}/>
                 <Route path="/skp/target-skp" name="Target SKP" component={SKP.targetSKP}/>
