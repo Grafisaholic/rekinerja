@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+
 import {
 	Row,
 	Col,
@@ -30,16 +32,20 @@ export default class ListKegiatan extends Component {
 		this.state = {
 			events : ['2018-06-12','2018-06-13','2018-06-14','2018-06-15'],
 			listKegiatan : [{
+				id : 1,
 				kegiatan_tugas_jabatan : 'Membuat Aplikasi Sistem Informasi',
 				aktifitas : 'Membuat Database',
 				status : 'pending'
 			},{
+				id : 2,
 				kegiatan_tugas_jabatan : 'Membuat Aplikasi Sistem Informasi',
 				aktifitas : 'Membuat DFD',
 				status : 'aktif'
 			}],
 			modalOpen : false
 		};
+		
+		this.tableKegiatan = {}
 	};
 	
 	onSelectDate(date) {
@@ -135,6 +141,9 @@ export default class ListKegiatan extends Component {
 			modalOpen : false
 		})
 		swal('Selesai', 'Kegiatan Berhasil Di Tambahkan', 'success')
+	}
+	
+	componentDidMount() {
 	}
 
 	confirmAktif(data) {
