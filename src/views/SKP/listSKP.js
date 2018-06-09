@@ -96,6 +96,7 @@ export default class ListSKP extends Component {
 		return (
 			<Modal
 				isOpen={this.state.modalOpen}
+				enableTitle={true}
 				modalTitle="Informasi Pembuatan SKP Baru"
 				onClose={() => this.setState({ modalOpen : false})}
 				modalBody={() => <div>{this.renderDetail()}</div>}/>

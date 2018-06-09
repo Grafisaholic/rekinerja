@@ -90,3 +90,16 @@
 	background-color: #27AE60;
 	color: #FFF;
 }
+
+.modal-title {
+	font-size: 15px;
+	color: #FFF;
+	font-weight: bold;
+}
+.modal-header {
+	background-color: #3498DB;
+	
+	.close {
+		color: #FFF;
+	}
+}

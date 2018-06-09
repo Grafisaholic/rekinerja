@@ -199,6 +199,7 @@ export default class capaianSKP extends Component {
 			<Modal
 				isOpen={this.state.modalOpen}
 				modalTitle={this.state.titleModal}
+				enableTitle={true}
 				onClose={() => this.setState({ modalOpen : false})}
 				modalBody={() => c}/>
 		)

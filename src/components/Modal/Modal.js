@@ -20,7 +20,7 @@ export default class ModalComponent extends Component {
 				className='modal-lg'>
 				{
 					this.props.enableTitle ? (
-						<ModalHeader toggle={this.toggle} style={{fontSize : '15px'}}>{this.props.modalTitle || 'Modal Title'}</ModalHeader>
+						<ModalHeader toggle={this.toggle}>{this.props.modalTitle || 'Modal Title'}</ModalHeader>
 					) : <div></div>
 				}
 				<ModalBody>

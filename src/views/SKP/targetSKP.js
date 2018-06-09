@@ -149,6 +149,7 @@ export default class componentName extends Component {
 			<Modal
 				isOpen={this.state.modalOpen}
 				modalTitle="Tambah Target SKP Baru"
+				enableTitle={true}
 				onClose={() => this.setState({ modalOpen : false})}
 				modalBody={() => {
 					return (

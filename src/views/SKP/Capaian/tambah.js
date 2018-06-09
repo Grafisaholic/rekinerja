@@ -100,7 +100,7 @@ export default class Capaian extends Component {
 					)}
 					<FormGroup>
 						<Label>Nama Kegiatan Tugas Jabatan</Label>
-						<Input value={this.props.nama_kegiatan} name='nama_kegiatan' disabled readonly/>
+						<Input value={this.props.nama_kegiatan} name='nama_kegiatan' readonly/>
 					</FormGroup>
 					<FormGroup>
 						<Label>Bulan</Label>
