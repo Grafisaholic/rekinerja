@@ -32,29 +32,7 @@ export default class capaianSKP extends Component {
 	  super(props)
 	
 	  this.state = {
-		 data : [{
-			id : 3000,
-			kegiatan_tugas_jabatan : 'Merumuskan program kerja kegiatan di tingkat kecamatan',
-			AK : '-',
-			jumlah : 50,
-			jumlah_satuan : 'Laporan',
-			kualitas : 3,
-			kualitas_satuan : 'Laporan',
-			waktu : 1,
-			kode_satuan_waktu : 'Bln',
-			biaya : 'Rp. 1.800.000'
-		 },{
-			id : 3001,
-			kegiatan_tugas_jabatan : 'Membuat sebuah aplikasi untuk pengembangan sistem informasi',
-			AK : '-',
-			jumlah : 50,
-			jumlah_satuan : 'Laporan',
-			kualitas : 3,
-			kualitas_satuan : 'Laporan',
-			waktu : 1,
-			kode_satuan_waktu : 'Bln',
-			biaya : 'Rp. 1.800.000'
-		 }],
+		 data : [],
 		 modalOpen : false,
 		 titleModal : '',
 		 targetSelected : '',
@@ -66,7 +44,7 @@ export default class capaianSKP extends Component {
 	};
 	
 	selectTarget(d) {
-		this.getDataCapaian()
+		this.getDataCapaian(d)
 		this.setState({targetSelected : d.id, targetSelectedName : d.kegiatan_tugas_jabatan})
 	}
 
@@ -88,7 +66,18 @@ export default class capaianSKP extends Component {
 		)
 	}
 
-	getDataCapaian() {
+	getListTarget() {
+		fetch(data.api + '/capaian/list').then((text) => text.json()).then((result) => {
+			console.log(result)
+			if (result.status == 200) {
+				const target = result.data
+		
+				this.setState({data : target})
+			}
+		})		
+	}
+
+	getDataCapaian(d) {
 		let dataCapaian = [{
 			id : 3000,
 			jumlah : 20,
@@ -121,6 +110,10 @@ export default class capaianSKP extends Component {
 
 	submitAjukan(data) {
 		
+	}
+
+	componentDidMount() {
+		this.getListTarget()
 	}
 
 	renderTabelCapaian() {
