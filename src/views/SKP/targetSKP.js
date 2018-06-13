@@ -25,6 +25,9 @@ import {
 // SHARED MODAL COMPONENTS
 import Modal from "../../components/Modal/Modal.js";
 import NewTarget from './newTargetSKP'
+import swal from 'sweetalert';
+
+const numeral = require('numeral');
 
 export default class componentName extends Component {
 	constructor(props) {
@@ -48,26 +51,52 @@ export default class componentName extends Component {
 			kode_satuan_waktu : 'Bln',
 			biaya : 'Rp. 1.800.000'
 		 }],
-		 dataPegawai : {
-			atasan : {
-				nip : 20150900192881928,
-				nama : 'Drs. DESMON HASTIONO, MM',
-				pangkat : 'Pembina Utama Madya (IV/d)',
-				jabatan : 'Sekretaris Daerah Kabupaten Pati',
-				unit_kerja : 'Sekretariat Daerah Kabupaten Pati'
-			},
-			pegawai : {
-				nip : 20150900192881928,
-				nama : 'RURI DARAWAMAN, S.Kom',
-				pangkat : 'Programmer',
-				jabatan : 'Sekretaris Daerah Kabupaten Pati',
-				unit_kerja : 'Sekretariat Daerah Kabupaten Pati'				
-			}
-		 },
+		 dataPegawai : {},
 		 modalOpen : false
 	  };
 	};
 	
+	getInfoSKP() {
+		fetch(data.api + '/target/list').then((text) => text.json()).then((result) => {
+			console.log(result)
+			if (result.status == 200) {
+				const {skp, target} = result.data
+				let dataPegawai = {
+					atasan : {
+						nip : skp.nip_atasan,
+						nama : skp.nama_atasan,
+						pangkat : skp.golongan_atasan,
+						jabatan : skp.jabatan_atasan,
+						unit_kerja : skp.lokasi_kantor_atasan
+					},
+					pegawai : {
+						nip : skp.nip_pegawai,
+						nama : skp.nama_pegawai,
+						pangkat : skp.golongan_pegawai,
+						jabatan : skp.jabatan_pegawai,
+						unit_kerja : skp.lokasi_kantor_pegawai						
+					}
+				}
+
+				target.map((t, k) => {
+					let kode_satuan_waktu = ['Hari', 'Minggu', 'Bulan']
+
+					t.biaya = 'Rp ' + numeral(t.biaya).format('0,0')
+					t.kode_satuan_waktu = kode_satuan_waktu[t.kode_satuan_waktu - 1]
+				})
+
+				this.setState({
+					dataPegawai : dataPegawai,
+					data : target
+				})
+			}
+		})
+	}
+
+	componentDidMount() {
+		this.getInfoSKP()
+	}
+
 	renderRow() {
 		return (
 			<tbody>
@@ -92,57 +121,65 @@ export default class componentName extends Component {
 	renderHeadSKP() {
 		const {dataPegawai} = this.state
 		const {atasan, pegawai} = dataPegawai
-		return (
-			<div className="table-responsive">
-				<Table className="table-bordered">
-					<thead>
-						<tr>
-							<th colSpan="2">I. PEJABAT PENILAI</th>
-							<th style={{textAlign : 'center'}}>NO</th>
-							<th colSpan="2">II. PEGAWAI NEGERI SIPIL YANG DINILAI</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Nama</td>
-							<td>{atasan.nama}</td>
-							<td style={{textAlign : 'center'}}>1</td>
-							<td>Nama</td>
-							<td>{pegawai.nama}</td>
-						</tr>
-						<tr>
-							<td>NIP</td>
-							<td>{atasan.nip}</td>
-							<td style={{textAlign : 'center'}}>2</td>
-							<td>NIP</td>
-							<td>{pegawai.nip}</td>
-						</tr>
-						<tr>
-							<td>Pangkat/Gol. Ruang</td>
-							<td>{atasan.pangkat}</td>
-							<td style={{textAlign : 'center'}}>3</td>
-							<td>Pangkat/Gol. Ruang</td>
-							<td>{pegawai.pangkat}</td>
-						</tr>
-						<tr>
-							<td>Jabatan</td>
-							<td>{atasan.jabatan}</td>
-							<td style={{textAlign : 'center'}}>4</td>
-							<td>Jabatan</td>
-							<td>{pegawai.jabatan}</td>
-						</tr>
-						<tr>
-							<td>Unit Kerja</td>
-							<td>{atasan.unit_kerja}</td>
-							<td style={{textAlign : 'center'}}>5</td>
-							<td>Unit Kerja</td>
-							<td>{pegawai.unit_kerja}</td>
-						</tr>
-					</tbody>
-				</Table>
-			</div>
-		)
+		if (dataPegawai && atasan && pegawai) {
+			return (
+				<div className="table-responsive">
+					<Table className="table-bordered">
+						<thead>
+							<tr>
+								<th colSpan="2">I. PEJABAT PENILAI</th>
+								<th style={{textAlign : 'center'}}>NO</th>
+								<th colSpan="2">II. PEGAWAI NEGERI SIPIL YANG DINILAI</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Nama</td>
+								<td>{atasan.nama}</td>
+								<td style={{textAlign : 'center'}}>1</td>
+								<td>Nama</td>
+								<td>{pegawai.nama}</td>
+							</tr>
+							<tr>
+								<td>NIP</td>
+								<td>{atasan.nip}</td>
+								<td style={{textAlign : 'center'}}>2</td>
+								<td>NIP</td>
+								<td>{pegawai.nip}</td>
+							</tr>
+							<tr>
+								<td>Pangkat/Gol. Ruang</td>
+								<td>{atasan.pangkat}</td>
+								<td style={{textAlign : 'center'}}>3</td>
+								<td>Pangkat/Gol. Ruang</td>
+								<td>{pegawai.pangkat}</td>
+							</tr>
+							<tr>
+								<td>Jabatan</td>
+								<td>{atasan.jabatan}</td>
+								<td style={{textAlign : 'center'}}>4</td>
+								<td>Jabatan</td>
+								<td>{pegawai.jabatan}</td>
+							</tr>
+							<tr>
+								<td>Unit Kerja</td>
+								<td>{atasan.unit_kerja}</td>
+								<td style={{textAlign : 'center'}}>5</td>
+								<td>Unit Kerja</td>
+								<td>{pegawai.unit_kerja}</td>
+							</tr>
+						</tbody>
+					</Table>
+				</div>
+			)
+		}
 	}
+
+	onSelesaiTambah(item) {
+		swal('Selesai', 'Target SKP Berhasil Di Tambahkan', 'success')
+		this.getInfoSKP()
+	}
+
   render() {
 	return (
 		<div className="animated fadeIn">
@@ -154,6 +191,7 @@ export default class componentName extends Component {
 				modalBody={() => {
 					return (
 						<NewTarget
+							onFinish={(data) => this.onSelesaiTambah(data)}						
 							onClose={() => this.setState({ modalOpen : false })}/>
 					)
 				}}/>
