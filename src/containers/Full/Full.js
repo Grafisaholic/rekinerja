@@ -9,6 +9,7 @@ import Footer from '../../components/Footer/';
 import Dashboard from '../../views/Dashboard/';
 import Kegiatan from '../../views/Kegiatan'
 import SKP from '../../views/SKP'
+import EPresensi from '../../views/EPresensi'
 
 class Full extends Component {
   render() {
@@ -27,6 +28,8 @@ class Full extends Component {
                 <Route path="/skp/list-skp" name="List SKP" component={SKP.listSKP}/>
                 <Route path="/skp/capaian-skp" name="Capaian SKP" component={SKP.capaianSKP}/>
                 <Route path="/skp/target-skp" name="Target SKP" component={SKP.targetSKP}/>
+
+                <Route path="/epresensi" name="EPresensi" component={EPresensi}/>
                 <Redirect from="/" to="/dashboard"/>
               </Switch>
             </Container>

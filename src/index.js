@@ -23,10 +23,12 @@ import Page500 from './views/Pages/Page500/'
 // COMPONENTS
 import Info from './views/Components/Info'
 import DataInfo from './assets/data/info.json'
+import {host} from './config/api.json'
 
 global.Info = Info
 global.data = {
-  info : DataInfo
+  info : DataInfo,
+  api : host
 }
 
 const history = createBrowserHistory();

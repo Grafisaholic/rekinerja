@@ -8,5 +8,6 @@ const routes = {
   '/skp/list-skp' : 'List SKP',
   '/skp/capaian-skp' : 'Capaian SKP',
   '/skp/target-skp' : 'Target SKP',
+  '/epresensi' : 'Presensi'
 };
 export default routes;

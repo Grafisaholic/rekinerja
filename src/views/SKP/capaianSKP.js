@@ -37,7 +37,9 @@ export default class capaianSKP extends Component {
 			kegiatan_tugas_jabatan : 'Merumuskan program kerja kegiatan di tingkat kecamatan',
 			AK : '-',
 			jumlah : 50,
+			jumlah_satuan : 'Laporan',
 			kualitas : 3,
+			kualitas_satuan : 'Laporan',
 			waktu : 1,
 			kode_satuan_waktu : 'Bln',
 			biaya : 'Rp. 1.800.000'
@@ -46,7 +48,9 @@ export default class capaianSKP extends Component {
 			kegiatan_tugas_jabatan : 'Membuat sebuah aplikasi untuk pengembangan sistem informasi',
 			AK : '-',
 			jumlah : 50,
+			jumlah_satuan : 'Laporan',
 			kualitas : 3,
+			kualitas_satuan : 'Laporan',
 			waktu : 1,
 			kode_satuan_waktu : 'Bln',
 			biaya : 'Rp. 1.800.000'
@@ -55,7 +59,9 @@ export default class capaianSKP extends Component {
 		 titleModal : '',
 		 targetSelected : '',
 		 targetSelectedName : '',
-		 dataCapaian : []
+		 dataCapaian : [],
+		 action : '',
+		 dataEdit : {}
 	  };
 	};
 	
@@ -86,18 +92,35 @@ export default class capaianSKP extends Component {
 		let dataCapaian = [{
 			id : 3000,
 			jumlah : 20,
+			jumlah_satuan : 'Laporan',
 			kualitas : 10,
+			kualitas_satuan : 'Laporan',
 			bulan : 'Mei',
 			status : 'aktif'
 		 },{
 			id : 3001,
 			jumlah : 0,
+			jumlah_satuan : 'Laporan',
 			kualitas : 0,
+			kualitas_satuan : 'Laporan',
 			bulan : 'Juni',
 			status : 'pending'
 		}]
 
 		this.setState({dataCapaian})
+	}
+
+	editForm(data) {
+		this.setState({
+			action : 'edit',
+			modalOpen : true,
+			dataEdit : data,
+			titleModal : 'Edit Capaian'
+		})
+	}
+
+	submitAjukan(data) {
+		
 	}
 
 	renderTabelCapaian() {
@@ -133,16 +156,25 @@ export default class capaianSKP extends Component {
 												<td width="50px">{k + 1}</td>
 												<td width="100px">{d.bulan}</td>
 												<td width="50px">{d.jumlah}</td>
-												<td width="100px">Laporan</td>
+												<td width="100px">{d.jumlah_satuan}</td>
 												<td width="50px">{d.kualitas}</td>
-												<td width="100px">Satuan Mutu</td>
+												<td width="100px">{d.kualitas_satuan}</td>
 												<td width="100px">
 													<span className={"label label-" + color}>{d.status}</span>
 												</td>
 												<td width="70px">
-													<Button className="btn btn-xs btn-primary">
-														<i className="fa fa-pencil"/>
-													</Button>
+													{
+														d.status == 'pending' && (
+															<InputGroupButton>
+																<Button className="btn btn-xs btn-primary" onClick={() => this.editForm(d) } title="Edit Capaian">
+																	<i className="fa fa-pencil"/>
+																</Button>
+																<Button className="btn btn-xs btn-success" onClick={() => this.submitAjukan(d) } title="Ajukan Kegiatan">
+																	<i className="fa fa-rocket"/>
+																</Button>
+															</InputGroupButton>
+													)
+													}
 												</td>
 											</tr>
 										)
@@ -168,21 +200,39 @@ export default class capaianSKP extends Component {
 
 	selesaiTambah(data) {
 		if (data.status == 200) {
-			swal('Berhasil Menambah Capaian')
+			let message = data.message || 'Berhasil Menambah Capaian'
+			swal(message)
 
 			let dataAwal = this.state.dataCapaian
-			dataAwal.push({
-				id : this.state.dataCapaian.length + 1,
-				jumlah : 0,
-				kualitas : 0,
-				bulan : data.data.bulan,
-				status : 'pending'
-			})
+			if (data.type == 'edit') {
+				let edited = []
+				dataAwal.map((d, k) => {
+					console.log(d, data.data)
+					if (d.id == data.data.id) {
+						d = data.data
+					}
+					edited.push(d)
+				})
+				this.setState({
+					dataCapaian : edited
+				})
+			} else {
+				dataAwal.push({
+					id : this.state.dataCapaian.length + 1,
+					jumlah : 0,
+					kualitas : 0,
+					bulan : data.data.bulan,
+					status : 'pending'
+				})
+
+				this.setState({
+					dataCapaian : dataAwal
+				})
+			}
 	
 			this.setState({
 				modalOpen : false,
-				titleModal : '',
-				dataCapaian : dataAwal
+				titleModal : ''
 			})
 		} else {
 
@@ -193,14 +243,16 @@ export default class capaianSKP extends Component {
 		let c = <TambahCapaian
 			nama_kegiatan={this.state.targetSelectedName}
 			onFinish={(data) => this.selesaiTambah(data)}
-			onClose={() => this.setState({ modalOpen : false, titleModal : '' })}/>
+			action={this.state.action}
+			dataEdit={this.state.dataEdit}
+			onClose={() => this.setState({ modalOpen : false, titleModal : '', action : ''})}/>
 
 			return (
 			<Modal
 				isOpen={this.state.modalOpen}
 				modalTitle={this.state.titleModal}
 				enableTitle={true}
-				onClose={() => this.setState({ modalOpen : false})}
+				onClose={() => this.setState({ modalOpen : false, titleModal : '', action : ''})}
 				modalBody={() => c}/>
 		)
 	}

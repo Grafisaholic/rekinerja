@@ -17,11 +17,7 @@ export default class DashboardView extends Component {
     return (
       <div className="animated fadeIn">
         <HeaderPegawai/>
-        <Row>
-          <Col md="8" lg="8" xs="12" sm="12">
-            <ProfilePegawai/>
-          </Col>
-        </Row>
+        <ProfilePegawai/>
       </div>
     )
   }

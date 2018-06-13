@@ -28,6 +28,10 @@ export default class AddKegiatan extends Component {
       targetValue : '',
       waktu_mulai : '',
       waktu_selesai : '',
+      lokasiKegiatan : '',
+      file1 : '',
+      file2 : '',
+      file3 : '',
       error_message : ''
     };
   };
@@ -53,7 +57,10 @@ export default class AddKegiatan extends Component {
       kegiatan_tugas_jabatan : this.state.targetValue,
       nama_kegiatan : this.state.namaKegiatan,
       waktu_mulai : this.state.waktu_mulai,
-      waktu_selesai : this.state.waktu_selesai
+      waktu_selesai : this.state.waktu_selesai,
+      file1 : this.state.file1,
+      file2 : this.state.file2,
+      file3 : this.state.file3,
     }
 
     this.setState({
@@ -110,6 +117,26 @@ export default class AddKegiatan extends Component {
                       onChange={(waktu_selesai) => this.setState({waktu_selesai})}/>
                   </Col>
               </Row>
+            </FormGroup>
+
+            <FormGroup>
+              <Label htmlFor="lokasiKegiatan">Lokasi Kegiatan</Label>
+              <Input type="text" id="lokasiKegiatan" placeholder="Masukkan Lokasi Kegiatan" onChange={(e) => this.setState({lokasiKegiatan : e.target.value})} required/>
+            </FormGroup>
+
+            <FormGroup>
+              <Label htmlFor="file1">File Pendukung (1)</Label>
+              <input className="form-control" type="file" id="file1" required/>
+            </FormGroup>
+
+            <FormGroup>
+              <Label htmlFor="file1">File Pendukung (2)</Label>
+              <input className="form-control" type="file" id="file1"/>
+            </FormGroup>
+
+            <FormGroup>
+              <Label htmlFor="file1">File Pendukung (3)</Label>
+              <input className="form-control" type="file" id="file1"/>
             </FormGroup>
 
             <FormGroup>
