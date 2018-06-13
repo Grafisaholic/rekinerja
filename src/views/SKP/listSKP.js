@@ -10,37 +10,122 @@ import {
 	Table,
 } from "reactstrap";
 import Modal from '../../components/Modal'
+import swal from 'sweetalert';
+import moment from 'moment'
+moment.locale('id')
 
 export default class ListSKP extends Component {
 	constructor(props) {
 	  super(props)
 	
 	  this.state = {
-		 data : [{
-			id : 1,
-			tahun : 2018,
-			nip_atasan : '19980604200150908001',
-			nama_atasan : 'Ruri Darmawan',
-			created_at : '2018-09-04 09:09:20',
-			status : 'pending'
-		},{
-			id : 2,
-			tahun : 2017,
-			nip_atasan : '19980604200150908001',
-			nama_atasan : 'Ruri Darmawan',
-			created_at : '2018-09-04 09:09:20',
-			status : 'aktif'
-		}],
+		data : [],
+		infoSKP : {},
 		modalOpen : false
 	  };
 	};
+
+	getListSKP() {
+		fetch(data.api + '/skp/list').then((text) => text.json()).then((result) => {
+			if (result.status == 200) {
+				result.data.map((r, key) => {
+					let status = ['Pending', 'Aktif']
+
+					r.created_at = moment(r.created_at).format('DD MMMM YYYY HH:mm:ss')
+					r.status = status[r.status]
+					r.approve_text = r.approve == 'yes' ? 'Di Setujui' : 'Tidak Di Setujui'
+				})
+				this.setState({data : result.data})
+			}
+		})
+	}
+
+	getInfoSKP() {
+		fetch(data.api + '/skp/create').then((text) => text.json()).then((result) => {
+			if (result.status == 200) {
+				this.setState({infoSKP : result.data})
+			}
+		})
+	}
+
+	saveSKP() {
+		let dataToSend = {
+			nama_atasan : this.state.infoSKP.nama_atasan,
+			nip_atasan : this.state.infoSKP.nip_atasan,
+			nama_pegawai : this.state.infoSKP.nama_pegawai,
+			nip_pegawai : this.state.infoSKP.nip_pegawai,
+			tahun_skp : this.state.infoSKP.tahun_skp
+		}
+		console.log(dataToSend)
+		fetch(data.api + '/skp/save', {
+			method : 'POST',
+			headers : {
+				'Accept' : 'application/json',
+				'Content-Type' : 'application/json'
+			},
+			body : JSON.stringify(dataToSend)
+		}).then((text) => text.json()).then((result) => {
+			if (result.status == 200) {
+				this.setState({
+					modalOpen : false
+				}, () => {
+					swal('Selesai', 'SKP Berhasil Di Buat', 'success')
+					this.getListSKP()
+				})
+			}
+		})
+	}
+
+	confirmAktif(item) {
+		swal({
+			title: "Anda Yakin Ingin Mengajukan Sasaran Kinerja Pegawai Ini ?",
+			text: "Jika anda mengajukan SKP ini, maka SKP anda tidak bisa di edit. pastikan data yang anda inputkan sudah benar",
+			icon: "info",
+			buttons: true,
+			dangerMode: true,
+		  })
+		  .then((willDelete) => {
+			if (willDelete) {
+				let dataToSend = {
+					id_skp : item.id_skp
+				}
+
+				fetch(data.api + '/skp/ajukan', {
+					method : 'POST',
+					headers : {
+						'Accept' : 'application/json',
+						'Content-Type' : 'application/json'
+					},
+					body : JSON.stringify(dataToSend)							
+				}).then((text) => text.json()).then((result) => {
+					if (result.status == 200) {
+						swal("Selamat Kegiatan Anda Sudah Aktif!", {
+							icon: "success",
+						});
+						this.getListSKP()
+					} else {
+						swal(result.message, {
+							icon: "warning",
+						});						
+					}
+				})
+			}
+		});
+	}	
+
+	componentDidMount() {
+		this.getListSKP()
+		this.getInfoSKP()
+	}
 	
 	renderBody() {
 		return (
 			<tbody>
 				{
 					this.state.data.map((d, key) => {
-						let color = d.status == 'pending' ? 'warning' : 'success'
+						let color = d.status == 'Pending' ? 'warning' : 'success'
+						let colorApprove = d.approve == 'no' ? 'danger' : 'success'
+
 						return (
 							<tr key={key}>
 								<td>{d.tahun}</td>
@@ -51,10 +136,14 @@ export default class ListSKP extends Component {
 									<span className={'label label-' + color}>{d.status}</span>
 								</td>
 								<td>
+									<span className={'label label-' + colorApprove}>{d.approve_text}</span>
+								</td>
+								<td>{d.approve == 'yes' && moment(d.tgl_approve, 'YYYY-MM-DD').format('DD MMMM YYYY')}</td>
+								<td>
 									{
-										d.status == 'pending' ? (
+										d.status == 'Pending' ? (
 											<div>
-												{this.renderActionBtn()}
+												{this.renderActionBtn(d)}
 											</div>
 										) : (
 											<div>
@@ -82,10 +171,10 @@ export default class ListSKP extends Component {
 		)
 	}
 
-	renderActionBtn() {
+	renderActionBtn(data) {
 		return (
 			<div>
-				<Button className="btn btn-xs btn-success" title="Ajukan">
+				<Button className="btn btn-xs btn-success" title="Ajukan" onClick={() => this.confirmAktif(data)}>
 					<i className="fa fa-rocket"/>
 				</Button>
 			</div>
@@ -111,22 +200,22 @@ export default class ListSKP extends Component {
 						<tr>
 							<td style={{width : '200px'}}>NIP Atasan</td>
 							<td>:</td>
-							<td>1998060420150909001</td>
+							<td>{this.state.infoSKP.nip_atasan}</td>
 						</tr>
 						<tr>
 							<td style={{width : '200px'}}>Nama Atasan</td>
 							<td>:</td>
-							<td>Fawaiq Nur Muhammad</td>
+							<td>{this.state.infoSKP.nama_atasan}</td>
 						</tr>
 						<tr>
 							<td style={{width : '200px'}}>NIP Pegawai</td>
 							<td>:</td>
-							<td>1998060420150909001</td>
+							<td>{this.state.infoSKP.nip_pegawai}</td>
 						</tr>
 						<tr>
 							<td style={{width : '200px'}}>Nama Pegawai</td>
 							<td>:</td>
-							<td>Shodiqul Muzaki</td>
+							<td>{this.state.infoSKP.nama_pegawai}</td>
 						</tr>
 						<tr>
 							<td style={{width : '200px'}}>Tahun SKP</td>
@@ -138,7 +227,7 @@ export default class ListSKP extends Component {
 							<td></td>
 							<td></td>
 							<td>
-								<Button className="btn btn-primary">BUAT SKP SEKARANG</Button>
+								<Button className="btn btn-primary" onClick={() => this.saveSKP()}>BUAT SKP SEKARANG</Button>
 								<Button className="btn btn-default" onClick={() => this.setState({ modalOpen : false })}>BATALKAN</Button>
 							</td>
 						</tr>
@@ -172,6 +261,8 @@ export default class ListSKP extends Component {
 													<th>Nama Atasan</th>
 													<th>Tanggal Pembuatan</th>
 													<th>Status</th>
+													<th>Persetujuan</th>
+													<th>Tanggal Di Setujui</th>
 													<th>Aksi</th>
 												</tr>
 											</thead>

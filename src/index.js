@@ -28,7 +28,7 @@ import {host} from './config/api.json'
 global.Info = Info
 global.data = {
   info : DataInfo,
-  api : host
+  api : host + "/api"
 }
 
 const history = createBrowserHistory();

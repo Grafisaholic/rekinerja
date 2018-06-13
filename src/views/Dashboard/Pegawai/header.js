@@ -20,7 +20,7 @@ export default class HeaderProfile extends Component {
   };
   
   fetchInfo() {
-    fetch(data.api + '/api/info').then((text) => text.json()).then((result) => {
+    fetch(data.api + '/info').then((text) => text.json()).then((result) => {
       if (result.status == 200) {
         this.setState({
           data : result.data.pegawai[0]

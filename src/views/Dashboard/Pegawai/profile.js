@@ -21,7 +21,7 @@ export default class ProfilePegawai extends Component {
   };
   
   fetchInfo() {
-    fetch(data.api + '/api/info').then((text) => text.json()).then((result) => {
+    fetch(data.api + '/info').then((text) => text.json()).then((result) => {
       if (result.status == 200) {
         this.setState({
 					pegawai : result.data.pegawai[0],
