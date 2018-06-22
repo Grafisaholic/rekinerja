@@ -10,6 +10,10 @@ import Dashboard from '../../views/Dashboard/';
 import Kegiatan from '../../views/Kegiatan'
 import SKP from '../../views/SKP'
 import EPresensi from '../../views/EPresensi'
+import ReviewSKP from '../../views/Review/skp'
+import ReviewTarget from '../../views/Review/target'
+import ReviewCapaian from '../../views/Review/capaian'
+import TargetSKP from '../../views/SKP/newTargetSKP';
 
 class Full extends Component {
   render() {
@@ -28,6 +32,10 @@ class Full extends Component {
                 <Route path="/skp/list-skp" name="List SKP" component={SKP.listSKP}/>
                 <Route path="/skp/capaian-skp" name="Capaian SKP" component={SKP.capaianSKP}/>
                 <Route path="/skp/target-skp" name="Target SKP" component={SKP.targetSKP}/>
+
+                <Route path="/review/skp" name="Review SKP" component={ReviewSKP}/>
+                <Route path="/review/target" name="Review Target" component={ReviewTarget}/>
+                <Route path="/review/capaian" name="Review Capaian" component={ReviewCapaian}/>
 
                 <Route path="/epresensi" name="EPresensi" component={EPresensi}/>
                 <Redirect from="/" to="/dashboard"/>
