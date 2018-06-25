@@ -34,6 +34,8 @@ export default class AddKegiatan extends Component {
       file3 : '',
       error_message : ''
     };
+
+    this.fileChangedHandler = this.fileChangedHandler.bind(this);
   };
 
   getDataTarget() {
@@ -52,6 +54,13 @@ export default class AddKegiatan extends Component {
     this.getDataTarget()
   }
 
+  fileChangedHandler (event) {
+    const file = event.target.files;
+    this.setState({
+      file1 : file,
+    })
+  }
+
   onSimpan() {
     let data = {
       kegiatan_tugas_jabatan : this.state.targetValue,
@@ -63,12 +72,12 @@ export default class AddKegiatan extends Component {
       file3 : this.state.file3,
     }
     let dataForm = new FormData();
-    let imagedata1 = document.querySelector('input[type="file1"]').files[0];
-    let imagedata2 = document.querySelector('input[type="file2"]').files[0];
-    let imagedata3 = document.querySelector('input[type="file3"]').files[0];
-    data.append("file1", imagedata1);
-    data.append("file2", imagedata2);
-    data.append("file3", imagedata3);
+    // let imagedata1 = document.querySelector('input[type="file1"]').files[0];
+    // let imagedata2 = document.querySelector('input[type="file2"]').files[0];
+    // let imagedata3 = document.querySelector('input[type="file3"]').files[0];
+    // data.append("file1", imagedata1);
+    // data.append("file2", imagedata2);
+    // data.append("file3", imagedata3);
 
     this.setState({
       error_message : ''
@@ -77,7 +86,7 @@ export default class AddKegiatan extends Component {
     if (data.kegiatan_tugas_jabatan != '' || data.nama_kegiatan != '' || data.waktu_mulai != '' || data.waktu_selesai != '') {
       // this.props.onFinish(data)
       console.log(data);
-      fetch("http://localhost:8910/taskCreationController/createStoryTask", {
+      fetch("http://192.168.1.69:8089/api/kegiatan/saveKegiatan", {
         mode: 'no-cors',
         method: "POST",
         body: data
@@ -148,7 +157,7 @@ export default class AddKegiatan extends Component {
 
             <FormGroup>
               <Label htmlFor="file1">File Pendukung (1)</Label>
-              <input className="form-control" type="file" id="file1" required/>
+              <input className="form-control" onChange={this.fileChangedHandler} type="file" id="file1" required/>
             </FormGroup>
 
             <FormGroup>
