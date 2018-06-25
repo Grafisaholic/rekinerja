@@ -62,13 +62,35 @@ export default class AddKegiatan extends Component {
       file2 : this.state.file2,
       file3 : this.state.file3,
     }
+    let dataForm = new FormData();
+    let imagedata1 = document.querySelector('input[type="file1"]').files[0];
+    let imagedata2 = document.querySelector('input[type="file2"]').files[0];
+    let imagedata3 = document.querySelector('input[type="file3"]').files[0];
+    data.append("file1", imagedata1);
+    data.append("file2", imagedata2);
+    data.append("file3", imagedata3);
 
     this.setState({
       error_message : ''
     })
 
     if (data.kegiatan_tugas_jabatan != '' || data.nama_kegiatan != '' || data.waktu_mulai != '' || data.waktu_selesai != '') {
-      this.props.onFinish(data)
+      // this.props.onFinish(data)
+      console.log(data);
+      fetch("http://localhost:8910/taskCreationController/createStoryTask", {
+        mode: 'no-cors',
+        method: "POST",
+        body: data
+      }).then(function (res) {
+        console.log(res);
+        if (res.ok) {
+          alert("Perfect! ");
+        } else if (res.status == 401) {
+          alert("Oops! ");
+        }
+      }, function (e) {
+        alert("Error submitting form!");
+      });
     } else {
       this.setState({
         error_message : 'Mohon Lengkapi Semua Data'
@@ -131,12 +153,12 @@ export default class AddKegiatan extends Component {
 
             <FormGroup>
               <Label htmlFor="file1">File Pendukung (2)</Label>
-              <input className="form-control" type="file" id="file1"/>
+              <input className="form-control" type="file" id="file2"/>
             </FormGroup>
 
             <FormGroup>
               <Label htmlFor="file1">File Pendukung (3)</Label>
-              <input className="form-control" type="file" id="file1"/>
+              <input className="form-control" type="file" id="file3"/>
             </FormGroup>
 
             <FormGroup>
