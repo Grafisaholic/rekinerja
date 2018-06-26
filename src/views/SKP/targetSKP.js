@@ -34,23 +34,7 @@ export default class componentName extends Component {
 	  super(props)
 	
 	  this.state = {
-		 data : [{
-			kegiatan_tugas_jabatan : 'Merumuskan program kerja kegiatan di tingkat kecamatan',
-			AK : '-',
-			jumlah : 50,
-			kualitas : 3,
-			waktu : 1,
-			kode_satuan_waktu : 'Bln',
-			biaya : 'Rp. 1.800.000'
-		 },{
-			kegiatan_tugas_jabatan : 'Merumuskan program kerja kegiatan di tingkat kecamatan',
-			AK : '-',
-			jumlah : 50,
-			kualitas : 3,
-			waktu : 1,
-			kode_satuan_waktu : 'Bln',
-			biaya : 'Rp. 1.800.000'
-		 }],
+		 data : [],
 		 dataPegawai : {},
 		 modalOpen : false
 	  };
@@ -58,24 +42,29 @@ export default class componentName extends Component {
 	
 	getInfoSKP() {
 		fetch(data.api + '/target/list').then((text) => text.json()).then((result) => {
-			console.log(result)
 			if (result.status == 200) {
 				const {skp, target} = result.data
-				let dataPegawai = {
-					atasan : {
-						nip : skp.nip_atasan,
-						nama : skp.nama_atasan,
-						pangkat : skp.golongan_atasan,
-						jabatan : skp.jabatan_atasan,
-						unit_kerja : skp.lokasi_kantor_atasan
-					},
-					pegawai : {
-						nip : skp.nip_pegawai,
-						nama : skp.nama_pegawai,
-						pangkat : skp.golongan_pegawai,
-						jabatan : skp.jabatan_pegawai,
-						unit_kerja : skp.lokasi_kantor_pegawai						
+				if (skp) {
+					let dataPegawai = {
+						atasan : {
+							nip : skp.nip_atasan,
+							nama : skp.nama_atasan,
+							pangkat : skp.golongan_atasan,
+							jabatan : skp.jabatan_atasan,
+							unit_kerja : skp.lokasi_kantor_atasan
+						},
+						pegawai : {
+							nip : skp.nip_pegawai,
+							nama : skp.nama_pegawai,
+							pangkat : skp.golongan_pegawai,
+							jabatan : skp.jabatan_pegawai,
+							unit_kerja : skp.lokasi_kantor_pegawai
+						}
 					}
+
+					this.setState({
+						dataPegawai : dataPegawai
+					})
 				}
 
 				target.map((t, k) => {
@@ -83,16 +72,103 @@ export default class componentName extends Component {
 
 					t.biaya = 'Rp ' + numeral(t.biaya).format('0,0')
 					t.kode_satuan_waktu = kode_satuan_waktu[t.kode_satuan_waktu - 1]
+					t.status = t.status == 0 ? 'Pending' : 'Aktif'
+					t.approve_txt = ''
+					if (t.approve == 'no') {
+						if (!t.tgl_approve) {
+							t.approve_txt = 'Belum Di Setujui'
+							t.approve_color = 'warning'
+						} else {
+							t.approve_txt = 'Tidak Di Setujui'
+							t.approve_color = 'danger'
+						}
+					} else {
+						t.approve_txt = 'Di Setujui'
+						t.approve_color = 'success'
+					}
 				})
 
 				this.setState({
-					dataPegawai : dataPegawai,
 					data : target
 				})
 			}
 		})
 	}
 
+	confirmAktif(item) {
+		swal({
+			title: "Anda Yakin Ingin Mengajukan Target Sasaran Kinerja Pegawai Ini ?",
+			text: "Jika anda mengajukan Target ini, maka Target anda tidak bisa di edit. pastikan data yang anda inputkan sudah benar",
+			icon: "info",
+			buttons: true,
+			dangerMode: true,
+		  })
+		  .then((willDelete) => {
+			if (willDelete) {
+				let dataToSend = {
+					id_target : item.id
+				}
+
+				fetch(data.api + '/target/ajukan', {
+					method : 'POST',
+					headers : {
+						'Accept' : 'application/json',
+						'Content-Type' : 'application/json'
+					},
+					body : JSON.stringify(dataToSend)							
+				}).then((text) => text.json()).then((result) => {
+					if (result.status == 200) {
+						swal("Selamat Target Anda Sudah Aktif!", {
+							icon: "success",
+						});
+						this.getInfoSKP()
+					} else {
+						swal(result.message, {
+							icon: "warning",
+						});						
+					}
+				})
+			}
+		});
+	}
+
+	confirmDelete(item) {
+		swal({
+			title: "Anda Yakin Ingin Menghapus Target Sasaran Kinerja Pegawai Ini ?",
+			text: "Data yang sudah di hapus tidak bisa di kembalikan lagi",
+			icon: "info",
+			buttons: true,
+			dangerMode: true,
+		  })
+		  .then((willDelete) => {
+			if (willDelete) {
+				let dataToSend = {
+					id_target : item.id
+				}
+
+				fetch(data.api + '/target/delete', {
+					method : 'POST',
+					headers : {
+						'Accept' : 'application/json',
+						'Content-Type' : 'application/json'
+					},
+					body : JSON.stringify(dataToSend)							
+				}).then((text) => text.json()).then((result) => {
+					if (result.status == 200) {
+						swal("Data Target Anda Sudah Terhapus!", {
+							icon: "success",
+						});
+						this.getInfoSKP()
+					} else {
+						swal(result.message, {
+							icon: "warning",
+						});						
+					}
+				})
+			}
+		});
+	}
+	
 	componentDidMount() {
 		this.getInfoSKP()
 	}
@@ -106,11 +182,29 @@ export default class componentName extends Component {
 							<td>{key + 1}</td>
 							<td>{d.kegiatan_tugas_jabatan}</td>
 							<td>{d.AK}</td>
-							<td>{d.jumlah}</td>
-							<td>{d.kualitas}</td>
+							<td>{d.jumlah + " " + d.satuan_jumlah}</td>
+							<td>{d.kualitas + " " + d.satuan_kualitas}</td>
 							<td>{d.waktu}</td>
 							<td>{d.kode_satuan_waktu}</td>
 							<td>{d.biaya}</td>
+							<td>
+								{
+									d.status == 'Pending' ? <span className='label label-warning'>{d.status}</span> : <span className='label label-success'>{d.status}</span>
+								}
+							</td>
+							<td>
+								<span className={"label label-"+d.approve_color}>{d.approve_txt}</span>
+							</td>
+							<td>
+								<InputGroupButton>
+									<Button className="btn-xs" color="success" onClick={() => this.confirmAktif(d)}>
+										<i className="fa fa-rocket"/>
+									</Button>
+									<Button className="btn-xs" color="danger" onClick={() => this.confirmDelete(d)}>
+										<i className="fa fa-trash"/>
+									</Button>
+								</InputGroupButton>
+							</td>
 						</tr>
 					)
 				})}
@@ -223,12 +317,16 @@ export default class componentName extends Component {
 											<th rowSpan="2" style={{verticalAlign : 'middle', textAlign : 'center'}}>KEGIATAN TUGAS JABATAN</th>
 											<th rowSpan="2" style={{verticalAlign : 'middle', textAlign : 'center'}}>AK</th>
 											<th colSpan="5" style={{verticalAlign : 'middle', textAlign : 'center'}}>TARGET</th>
+											<th colSpan="3" style={{verticalAlign : 'middle', textAlign : 'center'}}></th>
 										</tr>
 										<tr>
 											<th style={{verticalAlign : 'middle', textAlign : 'center', fontSize : '11px'}}>KUANT / OUTPUT</th>
 											<th style={{verticalAlign : 'middle', textAlign : 'center', fontSize : '11px'}}>KUAL / MUTU</th>
 											<th style={{verticalAlign : 'middle', textAlign : 'center', fontSize : '11px'}} colSpan="2">WAKTU</th>
 											<th style={{verticalAlign : 'middle', textAlign : 'center', fontSize : '11px'}}>BIAYA</th>
+											<th style={{verticalAlign : 'middle', textAlign : 'center', fontSize : '11px'}}>STATUS</th>
+											<th style={{verticalAlign : 'middle', textAlign : 'center', fontSize : '11px'}}>PERSETUJUAN</th>
+											<th style={{verticalAlign : 'middle', textAlign : 'center', fontSize : '11px'}}></th>
 										</tr>
 									</thead>
 

@@ -33,7 +33,19 @@ export default class ListSKP extends Component {
 
 					r.created_at = moment(r.created_at).format('DD MMMM YYYY HH:mm:ss')
 					r.status = status[r.status]
-					r.approve_text = r.approve == 'yes' ? 'Di Setujui' : 'Tidak Di Setujui'
+					r.approve_text = ''
+					if (r.approve == 'yes'){
+						r.approve_text = 'Telah Di Setujui'
+						r.colorApprove = 'success'
+					} else {
+						if (!r.tgl_approve) {
+							r.approve_text = 'Belum Di Setujui'
+							r.colorApprove = 'warning'
+						} else {
+							r.approve_text = 'Tidak Di Setujui'
+							r.colorApprove = 'danger'							
+						}
+					}
 				})
 				this.setState({data : result.data})
 			}
@@ -124,7 +136,6 @@ export default class ListSKP extends Component {
 				{
 					this.state.data.map((d, key) => {
 						let color = d.status == 'Pending' ? 'warning' : 'success'
-						let colorApprove = d.approve == 'no' ? 'danger' : 'success'
 
 						return (
 							<tr key={key}>
@@ -136,7 +147,7 @@ export default class ListSKP extends Component {
 									<span className={'label label-' + color}>{d.status}</span>
 								</td>
 								<td>
-									<span className={'label label-' + colorApprove}>{d.approve_text}</span>
+									<span className={'label label-' + d.colorApprove}>{d.approve_text}</span>
 								</td>
 								<td>{d.approve == 'yes' && moment(d.tgl_approve, 'YYYY-MM-DD').format('DD MMMM YYYY')}</td>
 								<td>
