@@ -17,6 +17,7 @@ import {
 	CardBlock	
 } from "reactstrap";
 
+import _ from 'underscore';
 import 'rc-calendar/assets/index.css';
 import FullCalendar from 'rc-calendar/lib/FullCalendar'
 import 'rc-select/assets/index.css';
@@ -30,7 +31,7 @@ export default class ListKegiatan extends Component {
 		super(props)
 
 		this.state = {
-			events : ['2018-06-12','2018-06-13','2018-06-14','2018-06-15'],
+			events : [],
 			listKegiatan : [{
 				id : 1,
 				kegiatan_tugas_jabatan : 'Membuat Aplikasi Sistem Informasi',
@@ -46,17 +47,60 @@ export default class ListKegiatan extends Component {
 		};
 		
 		this.tableKegiatan = {}
+		this.getListCanlendar = this.getListCanlendar.bind(this);
 	};
+
+	componentDidMount() {
+		this.getListCanlendar();
+	}
+
+	getListCanlendar () {
+		let URL = data.api+"/kegiatan/list";
+		console.log(URL);
+		fetch(URL).then((response) => response.json())
+			.then((responseData) => {
+				if (responseData.status == 200 ) {
+					let arr = [];
+					_.each(responseData.data, (item, i) => {
+						arr.push(item.tgl);
+					})
+					console.log(arr);
+					this.setState({
+						events : arr
+					});
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
 	
 	onSelectDate(date) {
-		console.log(date)
+		let waktu = moment(date._d).format("YYYY-MM-DD");
+		let URL = data.api+"/kegiatan/filter/"+waktu;
+		fetch(URL).then((response) => response.json())
+			.then((responseData) => {
+				if (responseData.status == 200 ) {
+					// let arr = [];
+					// _.each(responseData.data, (item, i) => {
+					// 	arr.push({
+					// 		kegiatan_tugas_jabatan : item.
+					// 	})
+					// })
+					// this.setState({
+					// 	events : arr
+					// });
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	}
 
 	renderRCalendar() {
 		return (
 			<FullCalendar
 				dateCellContentRender={(current, value) => {
-					// console.log(current)
 					const isActive = this.state.events.indexOf(moment(current).format('YYYY-MM-DD')) < 0 ? 'empty' : ''
 
 					return (
@@ -142,9 +186,6 @@ export default class ListKegiatan extends Component {
 		})
 		swal('Selesai', 'Kegiatan Berhasil Di Tambahkan', 'success')
 	}
-	
-	componentDidMount() {
-	}
 
 	confirmAktif(data) {
 		swal({
@@ -175,41 +216,41 @@ export default class ListKegiatan extends Component {
 				}}/>
 		)
 	}
-	
-  render() {
-	return (
-		<Row>
-			{this.renderModal()}
-			<Col md="4" xs="12" lg="4" className="animated fadeIn">
-				<Card>
-					<CardHeader className="bg-primary">
-						<strong>Tanggal Kegiatan</strong>
-					</CardHeader>
-					<CardBlock className="card-body" style={{padding : 0}}>
-						{this.renderRCalendar()}
-					</CardBlock>
-				</Card>
-			</Col>
-			<Col md="8" xs="12" lg="8" className="animated fadeIn">
-				<Card>
-					<CardHeader className="bg-primary">
-						<strong>List Kegiatan - Senin, 28 Mei 2018</strong>
-					</CardHeader>
-					<CardBlock className="card-body" style={{padding : 10, backgroundColor: '#EEE'}}>
-						<Button type="button" size="sm" color="primary">
-							<i className="fa fa-refresh"></i>
-						</Button>
-						&nbsp;
-						<Button type="button" size="sm" color="primary" onClick={() => this.setState({ modalOpen : true})}>
-							<i className="fa fa-plus"></i>
-						</Button>
-					</CardBlock>
-					<CardBlock className="card-body" style={{padding : 0}}>
-						{this.renderTableKegiatan()}
-					</CardBlock>
-				</Card>
-			</Col>			
-		</Row>
-	)
-  }
+
+	render() {
+		return (
+			<Row>
+				{this.renderModal()}
+				<Col md="4" xs="12" lg="4" className="animated fadeIn">
+					<Card>
+						<CardHeader className="bg-primary">
+							<strong>Tanggal Kegiatan</strong>
+						</CardHeader>
+						<CardBlock className="card-body" style={{padding : 0}}>
+							{this.renderRCalendar()}
+						</CardBlock>
+					</Card>
+				</Col>
+				<Col md="8" xs="12" lg="8" className="animated fadeIn">
+					<Card>
+						<CardHeader className="bg-primary">
+							<strong>List Kegiatan - Senin, 28 Mei 2018</strong>
+						</CardHeader>
+						<CardBlock className="card-body" style={{padding : 10, backgroundColor: '#EEE'}}>
+							<Button type="button" size="sm" color="primary">
+								<i className="fa fa-refresh"></i>
+							</Button>
+							&nbsp;
+							<Button type="button" size="sm" color="primary" onClick={() => this.setState({ modalOpen : true})}>
+								<i className="fa fa-plus"></i>
+							</Button>
+						</CardBlock>
+						<CardBlock className="card-body" style={{padding : 0}}>
+							{this.renderTableKegiatan()}
+						</CardBlock>
+					</Card>
+				</Col>			
+			</Row>
+		)
+	}
 };

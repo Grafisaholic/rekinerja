@@ -37,7 +37,6 @@ export default class ReviewCapaianSKP extends Component {
 		this.setState({
 			list_review : [],
 		});
-		
 	}
 
 	getBawahan () {
