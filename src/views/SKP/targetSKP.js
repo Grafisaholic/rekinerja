@@ -34,23 +34,7 @@ export default class componentName extends Component {
 	  super(props)
 	
 	  this.state = {
-		 data : [{
-			kegiatan_tugas_jabatan : 'Merumuskan program kerja kegiatan di tingkat kecamatan',
-			AK : '-',
-			jumlah : 50,
-			kualitas : 3,
-			waktu : 1,
-			kode_satuan_waktu : 'Bln',
-			biaya : 'Rp. 1.800.000'
-		 },{
-			kegiatan_tugas_jabatan : 'Merumuskan program kerja kegiatan di tingkat kecamatan',
-			AK : '-',
-			jumlah : 50,
-			kualitas : 3,
-			waktu : 1,
-			kode_satuan_waktu : 'Bln',
-			biaya : 'Rp. 1.800.000'
-		 }],
+		 data : [],
 		 dataPegawai : {},
 		 modalOpen : false
 	  };

@@ -51,20 +51,29 @@ export default class TargetSKP extends Component {
 			biaya : this.state.biaya
 		}
 
-		fetch(data.api + '/target/news', {
-			method : 'POST',
-			headers : {
-				'Accept' : 'application/json',
-				'Content-Type' : 'application/json'
-			},
-			body : JSON.stringify(dataToSend)
-		}).then((text) => text.json()).then((result) => {
-			if (result.status == 200) {
-				this.props.onClose()
-				this.props.onFinish(result)
-			}
-		})
-
+		if (this.state.kegiatan_tugas_jabatan == "" || this.state.ak == "" || this.state.jumlah == "" || this.state.satuan_jumlah == "" || this.state.kualitas == "" || this.state.waktu == "" || this.state.kode_satuan_waktu == "" || this.state.biaya == "") {
+			swal("data masih belum lengkap ", {
+				icon: "warning",
+			});
+		} else {
+			fetch(data.api + '/target/news', {
+				method : 'POST',
+				headers : {
+					'Accept' : 'application/json',
+					'Content-Type' : 'application/json'
+				},
+				body : JSON.stringify(dataToSend)
+			}).then((text) => text.json()).then((result) => {
+				if (result.status == 200) {
+					this.props.onClose()
+					this.props.onFinish(result)
+				} else {
+					swal(result.message, {
+						icon: "warning",
+					});	
+				}
+			});
+		}
 	}
 	
   render() {
