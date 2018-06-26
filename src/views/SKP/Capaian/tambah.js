@@ -78,13 +78,34 @@ export default class Capaian extends Component {
 			let bulan = _.findWhere(dataBulan, {index : parseInt(selectedMonth)})
 
 			if (bulan) {
-				let data = {
-					bulan : bulan.bulan
+				let dataToSend = {
+					bulan : selectedMonth,
+					id_target_skp : this.props.id_target
 				}
-				this.props.onFinish({
-					status : 200,
-					data : data
+
+				fetch(data.api + '/capaian/save', {
+					method : 'POST',
+					headers : {
+						'Accept' : 'application/json',
+						'Content-Type' : 'application/json'
+					},
+					body : JSON.stringify(dataToSend)
+				}).then((text) => text.json()).then((result) => {
+					if (result.status == 200) {
+						this.props.onFinish({
+							status : 200,
+							data : {
+								bulan : bulan.bulan
+							}
+						})
+					} else {
+						this.props.onFinish({
+							status : 500,
+							message : result.message
+						})
+					}
 				})
+
 			} else {
 				errorMessage = 'Bulan Tidak Valid'
 				this.setState({errorMessage})
@@ -108,9 +129,9 @@ export default class Capaian extends Component {
 			let bulan = _.findWhere(dataBulan, {index : parseInt(selectedMonth)})
 
 			if (bulan) {
-				let data = {
+				let dataToSend = {
 					id : this.props.dataEdit.id,
-					bulan : bulan.bulan,
+					bulan : selectedMonth,
 					jumlah : parseFloat(kuantitas),
 					jumlah_satuan : kuantitas_satuan,
 					kualitas : parseFloat(kualitas),
@@ -118,11 +139,28 @@ export default class Capaian extends Component {
 					status : this.props.dataEdit.status
 				}
 
-				this.props.onFinish({
-					status : 200,
-					type : 'edit',
-					data : data,
-					message : 'Edit Capaian Berhasil'
+				fetch(data.api + '/capaian/update', {
+					method : 'POST',
+					headers : {
+						'Accept' : 'application/json',
+						'Content-Type' : 'application/json'
+					},
+					body : JSON.stringify(dataToSend)
+				}).then((text) => text.json()).then((result) => {
+					if (result.status == 200) {
+						dataToSend.bulan = bulan.bulan
+						this.props.onFinish({
+							status : 200,
+							type : 'edit',
+							data : dataToSend,
+							message : 'Edit Capaian Berhasil'
+						})		
+					} else {
+						this.props.onFinish({
+							status : 500,
+							message : result.message
+						})
+					}
 				})
 			} else {
 				errorMessage = 'Bulan Tidak Valid'

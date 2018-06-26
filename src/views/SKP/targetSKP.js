@@ -152,7 +152,7 @@ export default class componentName extends Component {
 						'Accept' : 'application/json',
 						'Content-Type' : 'application/json'
 					},
-					body : JSON.stringify(dataToSend)							
+					body : JSON.stringify(dataToSend)
 				}).then((text) => text.json()).then((result) => {
 					if (result.status == 200) {
 						swal("Data Target Anda Sudah Terhapus!", {
@@ -162,7 +162,7 @@ export default class componentName extends Component {
 					} else {
 						swal(result.message, {
 							icon: "warning",
-						});						
+						});
 					}
 				})
 			}

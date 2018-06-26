@@ -26,26 +26,28 @@ import {
 import Modal from "../../components/Modal/Modal.js";
 import TambahCapaian from './Capaian/tambah'
 import swal from 'sweetalert';
+import moment from 'moment'
 
 export default class capaianSKP extends Component {
 	constructor(props) {
 	  super(props)
 	
 	  this.state = {
-		 data : [],
-		 modalOpen : false,
-		 titleModal : '',
-		 targetSelected : '',
-		 targetSelectedName : '',
-		 dataCapaian : [],
-		 action : '',
-		 dataEdit : {}
+		data : [],
+		modalOpen : false,
+		titleModal : '',
+		targetSelected : '',
+		targetSelectedName : '',
+		dataCapaian : [],
+		action : '',
+		dataEdit : {},
+		arrayBulan : ['', 'January', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'July', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
 	  };
 	};
 	
 	selectTarget(d) {
-		this.getDataCapaian(d)
 		this.setState({targetSelected : d.id, targetSelectedName : d.kegiatan_tugas_jabatan})
+		this.getDataCapaian(d)
 	}
 
 	renderRow() {
@@ -68,35 +70,52 @@ export default class capaianSKP extends Component {
 
 	getListTarget() {
 		fetch(data.api + '/capaian/list').then((text) => text.json()).then((result) => {
-			console.log(result)
 			if (result.status == 200) {
 				const target = result.data
-		
 				this.setState({data : target})
 			}
-		})		
+		})
 	}
 
 	getDataCapaian(d) {
-		let dataCapaian = [{
-			id : 3000,
-			jumlah : 20,
-			jumlah_satuan : 'Laporan',
-			kualitas : 10,
-			kualitas_satuan : 'Laporan',
-			bulan : 'Mei',
-			status : 'aktif'
-		 },{
-			id : 3001,
-			jumlah : 0,
-			jumlah_satuan : 'Laporan',
-			kualitas : 0,
-			kualitas_satuan : 'Laporan',
-			bulan : 'Juni',
-			status : 'pending'
-		}]
+		let dataCapaian = []
 
-		this.setState({dataCapaian})
+		fetch(data.api + '/capaian/filter/' + d.id).then((text) => text.json()).then((results) => {
+			if (results.status == 200) {
+				results.data.forEach((d, key) => {
+					let status = d.status == 0 ? 'pending' : d.status == 1 ? 'aktif' : 'Tidak Aktif'
+
+					d.approve_txt = ''
+					if (d.approve == 'no') {
+						if (!d.tgl_approve) {
+							d.approve_txt = 'Belum Di Setujui'
+							d.approve_color = 'warning'
+						} else {
+							d.approve_txt = 'Tidak Di Setujui'
+							d.approve_color = 'danger'
+						}
+					} else {
+						d.approve_txt = 'Di Setujui'
+						d.approve_color = 'success'
+					}
+
+					dataCapaian.push({
+						id : d.id,
+						jumlah : d.kuantitas,
+						jumlah_satuan : d.satuan_jumlah,
+						kualitas : d.kualitas,
+						kualitas_satuan : d.satuan_kualitas,
+						bulan : this.state.arrayBulan[d.bulan],
+						status : status,
+						approve_txt : d.approve_txt,
+						approve_color : d.approve_color
+					})
+				})
+				this.setState({dataCapaian})				
+			} else {
+				swal(results.message)
+			}
+		})
 	}
 
 	editForm(data) {
@@ -108,8 +127,82 @@ export default class capaianSKP extends Component {
 		})
 	}
 
-	submitAjukan(data) {
-		
+	submitAjukan(item) {
+		swal({
+			title: "Anda Yakin Ingin Mengajukan Capaian Sasaran Kinerja Pegawai Ini ?",
+			text: "Jika anda mengajukan Capaian ini, maka Capaian anda tidak bisa di edit. pastikan data yang anda inputkan sudah benar",
+			icon: "info",
+			buttons: true,
+			dangerMode: true,
+		  })
+		  .then((willDelete) => {
+			if (willDelete) {
+				let dataToSend = {
+					id : item.id
+				}
+
+				fetch(data.api + '/capaian/ajukan', {
+					method : 'POST',
+					headers : {
+						'Accept' : 'application/json',
+						'Content-Type' : 'application/json'
+					},
+					body : JSON.stringify(dataToSend)							
+				}).then((text) => text.json()).then((result) => {
+					if (result.status == 200) {
+						swal("Selamat Capaian Anda Sudah Aktif!", {
+							icon: "success",
+						});
+						this.getDataCapaian({
+							id : this.state.targetSelected
+						})
+					} else {
+						swal(result.message, {
+							icon: "warning",
+						});						
+					}
+				})
+			}
+		});		
+	}
+
+	submitDelete(item) {
+		swal({
+			title: "Anda Ingin Menghapus Data Ini ?",
+			text: "Jika anda menghapus Capaian ini, maka Capaian anda tidak bisa di kembalikan lagi",
+			icon: "info",
+			buttons: true,
+			dangerMode: true,
+		  })
+		  .then((willDelete) => {
+			if (willDelete) {
+				let dataToSend = {
+					id : item.id
+				}
+
+				fetch(data.api + '/capaian/delete', {
+					method : 'POST',
+					headers : {
+						'Accept' : 'application/json',
+						'Content-Type' : 'application/json'
+					},
+					body : JSON.stringify(dataToSend)							
+				}).then((text) => text.json()).then((result) => {
+					if (result.status == 200) {
+						swal("Capaian Sudah Di Hapus!", {
+							icon: "success",
+						});
+						this.getDataCapaian({
+							id : this.state.targetSelected
+						})
+					} else {
+						swal(result.message, {
+							icon: "warning",
+						});						
+					}
+				})
+			}
+		});		
 	}
 
 	componentDidMount() {
@@ -127,6 +220,7 @@ export default class capaianSKP extends Component {
 							<th colSpan="2" className="th-small" style={{textAlign : 'center'}}>KUANTITAS / OUTPUT</th>
 							<th colSpan="2" className="th-small" style={{textAlign : 'center'}}>KUALITAS / MUTU</th>
 							<th className="th-small" style={{textAlign : 'center'}}>STATUS</th>
+							<th className="th-small" style={{textAlign : 'center'}}>PERSETUJUAN</th>
 							<th className="th-small"></th>
 						</tr>
 					</thead>
@@ -134,7 +228,7 @@ export default class capaianSKP extends Component {
 						this.state.dataCapaian.length <= 0 ? (
 							<tbody>
 								<tr>
-									<td colSpan="6">
+									<td colSpan="8">
 										<center>Belum Ada Data</center>
 									</td>
 								</tr>
@@ -155,6 +249,9 @@ export default class capaianSKP extends Component {
 												<td width="100px">
 													<span className={"label label-" + color}>{d.status}</span>
 												</td>
+												<td width="100px">
+													<span className={"label label-" + d.approve_color}>{d.approve_txt}</span>
+												</td>
 												<td width="70px">
 													{
 														d.status == 'pending' && (
@@ -162,8 +259,11 @@ export default class capaianSKP extends Component {
 																<Button className="btn btn-xs btn-primary" onClick={() => this.editForm(d) } title="Edit Capaian">
 																	<i className="fa fa-pencil"/>
 																</Button>
-																<Button className="btn btn-xs btn-success" onClick={() => this.submitAjukan(d) } title="Ajukan Kegiatan">
+																<Button className="btn btn-xs btn-success" onClick={() => this.submitAjukan(d) } title="Ajukan Capaian">
 																	<i className="fa fa-rocket"/>
+																</Button>
+																<Button className="btn btn-xs btn-danger" onClick={() => this.submitDelete(d) } title="Hapus Capaian">
+																	<i className="fa fa-trash"/>
 																</Button>
 															</InputGroupButton>
 													)
@@ -200,7 +300,6 @@ export default class capaianSKP extends Component {
 			if (data.type == 'edit') {
 				let edited = []
 				dataAwal.map((d, k) => {
-					console.log(d, data.data)
 					if (d.id == data.data.id) {
 						d = data.data
 					}
@@ -235,6 +334,7 @@ export default class capaianSKP extends Component {
 	renderModal() {
 		let c = <TambahCapaian
 			nama_kegiatan={this.state.targetSelectedName}
+			id_target={this.state.targetSelected}
 			onFinish={(data) => this.selesaiTambah(data)}
 			action={this.state.action}
 			dataEdit={this.state.dataEdit}
